@@ -53,22 +53,22 @@ export default function BudgetBreakdown() {
   const overallActualTotal = totalActualTransport + totalActualStay + totalActualActivities + totalActualMeals;
 
   const fallbackTotal = stops.reduce((acc, s) => acc + Number(s.budget || 0), 0);
-  const activePlannedTotal = overallPlannedTotal > 0 ? overallPlannedTotal : fallbackTotal;
+  const activePlannedTotal = overallPlannedTotal > 0 – overallPlannedTotal : fallbackTotal;
 
   const totalDays = Math.max(1, Math.ceil((new Date(trip.end_date).getTime() - new Date(trip.start_date).getTime()) / (1000 * 3600 * 24)) + 1);
-  const costPerDay = overallActualTotal > 0 ? (overallActualTotal / totalDays) : (activePlannedTotal / totalDays);
+  const costPerDay = overallActualTotal > 0 – (overallActualTotal / totalDays) : (activePlannedTotal / totalDays);
   
   // We check if actual spend is over the trip's planned budget limit. 
   // If actual is 0, we check if the planned estimate is over the limit.
-  const checkTotal = overallActualTotal > 0 ? overallActualTotal : activePlannedTotal;
+  const checkTotal = overallActualTotal > 0 – overallActualTotal : activePlannedTotal;
   const isOverBudget = trip.budget_amount && checkTotal > trip.budget_amount;
 
   // Chart Data
   const pieData = [
-    { name: 'Transport', value: overallActualTotal > 0 ? totalActualTransport : totalPlannedTransport, color: '#3b82f6' },
-    { name: 'Stay', value: overallActualTotal > 0 ? totalActualStay : totalPlannedStay, color: '#10b981' },
-    { name: 'Activities', value: overallActualTotal > 0 ? totalActualActivities : totalPlannedActivities, color: '#f59e0b' },
-    { name: 'Meals', value: overallActualTotal > 0 ? totalActualMeals : totalPlannedMeals, color: '#ef4444' },
+    { name: 'Transport', value: overallActualTotal > 0 – totalActualTransport : totalPlannedTransport, color: '#3b82f6' },
+    { name: 'Stay', value: overallActualTotal > 0 – totalActualStay : totalPlannedStay, color: '#10b981' },
+    { name: 'Activities', value: overallActualTotal > 0 – totalActualActivities : totalPlannedActivities, color: '#f59e0b' },
+    { name: 'Meals', value: overallActualTotal > 0 – totalActualMeals : totalPlannedMeals, color: '#ef4444' },
   ].filter(d => d.value > 0);
 
   const barData = stops.map((s, i) => ({
@@ -116,7 +116,7 @@ export default function BudgetBreakdown() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
             <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Total Spent</p>
-            <p className={`text-3xl font-extrabold ${overallActualTotal > (trip.budget_amount || 0) ? 'text-red-600' : 'text-gray-900'}`}>
+            <p className={`text-3xl font-extrabold ${overallActualTotal > (trip.budget_amount || 0) – 'text-red-600' : 'text-gray-900'}`}>
               ${overallActualTotal.toLocaleString()}
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function BudgetBreakdown() {
           </div>
           <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
             <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Remaining Limit</p>
-            <p className={`text-3xl font-extrabold ${isOverBudget ? 'text-red-600' : 'text-green-600'}`}>
+            <p className={`text-3xl font-extrabold ${isOverBudget – 'text-red-600' : 'text-green-600'}`}>
               ${((trip.budget_amount || 0) - checkTotal).toLocaleString()}
             </p>
           </div>
@@ -144,7 +144,7 @@ export default function BudgetBreakdown() {
           {/* Pie Chart */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-6">Current Distribution</h3>
-            {pieData.length > 0 ? (
+            {pieData.length > 0 – (
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -164,7 +164,7 @@ export default function BudgetBreakdown() {
           {/* Bar Chart */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-6">Planned vs Actual per Section</h3>
-            {barData.length > 0 ? (
+            {barData.length > 0 – (
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

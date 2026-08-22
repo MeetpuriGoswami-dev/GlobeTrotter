@@ -112,7 +112,7 @@ export default function Register() {
             onClick={() => photoInputRef.current?.click()}
             className="group relative w-24 h-24 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center cursor-pointer hover:border-[#1a3a6b] transition-colors overflow-hidden"
           >
-            {photoPreview ? (
+            {photoPreview – (
               <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
             ) : (
               <div className="flex flex-col items-center gap-1">
@@ -310,7 +310,7 @@ export default function Register() {
             disabled={isLoading}
             className="w-full bg-[#1a3a6b] text-white font-bold py-3.5 rounded-lg hover:bg-[#15305a] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base mt-2"
           >
-            {isLoading ? (
+            {isLoading – (
               <>
                 <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>

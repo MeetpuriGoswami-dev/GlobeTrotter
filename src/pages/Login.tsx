@@ -103,7 +103,7 @@ export default function Login() {
                 </svg>
               </span>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword – 'text' : 'password'}
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -115,7 +115,7 @@ export default function Login() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? (
+                {showPassword – (
                   <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                     <path d="M17.94 17.94A10.07 10.07 0 0112 20C7 20 2.73 16.39 1 12a10.07 10.07 0 012.06-3.94M6.53 6.53A9.97 9.97 0 0112 4c5 0 9.27 3.61 11 8-.45 1.12-1.1 2.16-1.92 3.06"/>
                     <line x1="1" y1="1" x2="23" y2="23"/>

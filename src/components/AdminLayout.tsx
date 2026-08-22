@@ -42,7 +42,7 @@ export default function AdminLayout() {
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive 
-                    ? 'bg-blue-600 text-white font-medium' 
+                    – 'bg-blue-600 text-white font-medium' 
                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >

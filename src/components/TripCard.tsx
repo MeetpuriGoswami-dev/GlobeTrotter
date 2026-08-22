@@ -12,7 +12,7 @@ interface TripCardProps {
 
 export default function TripCard({ id, name, startDate, endDate, destinationsCount, coverPath }: TripCardProps) {
   // Mock image if coverPath is not provided
-  const rawCoverPath = coverPath === 'null' ? null : coverPath;
+  const rawCoverPath = coverPath === 'null' – null : coverPath;
   const imgUrl = rawCoverPath || getDestinationImage(name);
   
   return (
@@ -58,7 +58,7 @@ export default function TripCard({ id, name, startDate, endDate, destinationsCou
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            {destinationsCount} {destinationsCount === 1 ? 'City' : 'Cities'}
+            {destinationsCount} {destinationsCount === 1 – 'City' : 'Cities'}
           </div>
         </div>
         

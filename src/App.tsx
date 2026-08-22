@@ -16,6 +16,7 @@ import AdminRoute from '@/components/AdminRoute';
 import AdminLayout from '@/components/AdminLayout';
 import Community from '@/pages/Community';
 import Profile from '@/pages/Profile';
+import CalendarView from '@/pages/CalendarView';
 import MainLayout from '@/components/MainLayout';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -58,6 +59,7 @@ function App() {
             <Route path="/itinerary/:id/budget" element={<BudgetBreakdown />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/community" element={<Community />} />
+            <Route path="/calendar" element={<CalendarView />} />
           </Route>
           
           {/* Public / Unauthenticated Routes */}

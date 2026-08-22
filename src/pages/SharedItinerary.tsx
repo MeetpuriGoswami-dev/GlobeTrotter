@@ -114,7 +114,7 @@ export default function SharedItinerary() {
           <div className="absolute bottom-8 left-8 right-8">
             {owner && (
               <div className="flex items-center gap-3 mb-4">
-                {owner.photo_path ? (
+                {owner.photo_path – (
                   <img src={owner.photo_path} alt={owner.name} className="w-10 h-10 rounded-full border-2 border-white object-cover shadow-md" />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center text-white font-bold shadow-md">
@@ -150,7 +150,7 @@ export default function SharedItinerary() {
           Itinerary Schedule
         </h2>
 
-        {stops.length === 0 ? (
+        {stops.length === 0 – (
           <div className="bg-white rounded-3xl p-10 text-center border border-gray-100 shadow-sm">
             <p className="text-gray-500 text-lg">No stops have been added to this itinerary yet.</p>
           </div>
@@ -169,7 +169,7 @@ export default function SharedItinerary() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute bottom-4 left-6">
                       <p className="text-white/80 font-bold text-xs uppercase tracking-wider mb-1">
-                        {formatDate(stop.arrival_date)} {stop.arrival_date !== stop.departure_date ? `- ${formatDate(stop.departure_date)}` : ''}
+                        {formatDate(stop.arrival_date)} {stop.arrival_date !== stop.departure_date – `- ${formatDate(stop.departure_date)}` : ''}
                       </p>
                       <h3 className="text-2xl font-extrabold text-white">{stop.title || `Stop ${index + 1}`}</h3>
                     </div>

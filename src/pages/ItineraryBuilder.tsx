@@ -17,6 +17,7 @@ interface Section {
   actual_stay_cost?: string;
   actual_activities_cost?: string;
   actual_meals_cost?: string;
+  custom_costs?: { name: string; planned_cost: string; actual_cost: string }[];
   location?: any;
   position: number;
 }
@@ -48,15 +49,16 @@ export default function ItineraryBuilder() {
             description: stop.description || '',
             start_date: stop.arrival_date,
             end_date: stop.departure_date,
-            budget: stop.budget ? stop.budget.toString() : '',
-            transport_cost: stop.transport_cost ? stop.transport_cost.toString() : '',
-            stay_cost: stop.stay_cost ? stop.stay_cost.toString() : '',
-            activities_cost: stop.activities_cost ? stop.activities_cost.toString() : '',
-            meals_cost: stop.meals_cost ? stop.meals_cost.toString() : '',
-            actual_transport_cost: stop.actual_transport_cost ? stop.actual_transport_cost.toString() : '',
-            actual_stay_cost: stop.actual_stay_cost ? stop.actual_stay_cost.toString() : '',
-            actual_activities_cost: stop.actual_activities_cost ? stop.actual_activities_cost.toString() : '',
-            actual_meals_cost: stop.actual_meals_cost ? stop.actual_meals_cost.toString() : '',
+            budget: stop.budget – stop.budget.toString() : '',
+            transport_cost: stop.transport_cost – stop.transport_cost.toString() : '',
+            stay_cost: stop.stay_cost – stop.stay_cost.toString() : '',
+            activities_cost: stop.activities_cost – stop.activities_cost.toString() : '',
+            meals_cost: stop.meals_cost – stop.meals_cost.toString() : '',
+            actual_transport_cost: stop.actual_transport_cost – stop.actual_transport_cost.toString() : '',
+            actual_stay_cost: stop.actual_stay_cost – stop.actual_stay_cost.toString() : '',
+            actual_activities_cost: stop.actual_activities_cost – stop.actual_activities_cost.toString() : '',
+            actual_meals_cost: stop.actual_meals_cost – stop.actual_meals_cost.toString() : '',
+            custom_costs: stop.location?.custom_costs || [],
             location: stop.location || null,
             position: stop.position
           })));
@@ -76,6 +78,7 @@ export default function ItineraryBuilder() {
             actual_stay_cost: '',
             actual_activities_cost: '',
             actual_meals_cost: '',
+            custom_costs: [],
             position: 0
           }]);
         }
@@ -103,6 +106,7 @@ export default function ItineraryBuilder() {
       actual_stay_cost: '',
       actual_activities_cost: '',
       actual_meals_cost: '',
+      custom_costs: [],
       position: sections.length
     };
     setSections([...sections, newSection]);
@@ -112,9 +116,34 @@ export default function ItineraryBuilder() {
     setSections(sections.filter((_, i) => i !== index));
   };
 
-  const updateSection = (index: number, field: keyof Section, value: string) => {
+  const updateSection = (index: number, field: keyof Section, value: any) => {
     const updated = [...sections];
     updated[index] = { ...updated[index], [field]: value };
+    setSections(updated);
+  };
+
+  const addCustomCost = (index: number) => {
+    const updated = [...sections];
+    updated[index].custom_costs = [
+      ...(updated[index].custom_costs || []),
+      { name: '', planned_cost: '', actual_cost: '' }
+    ];
+    setSections(updated);
+  };
+
+  const updateCustomCost = (secIdx: number, costIdx: number, field: 'name' | 'planned_cost' | 'actual_cost', value: string) => {
+    const updated = [...sections];
+    const customCosts = [...(updated[secIdx].custom_costs || [])];
+    customCosts[costIdx] = { ...customCosts[costIdx], [field]: value };
+    updated[secIdx].custom_costs = customCosts;
+    setSections(updated);
+  };
+
+  const removeCustomCost = (secIdx: number, costIdx: number) => {
+    const updated = [...sections];
+    const customCosts = [...(updated[secIdx].custom_costs || [])];
+    customCosts.splice(costIdx, 1);
+    updated[secIdx].custom_costs = customCosts;
     setSections(updated);
   };
 
@@ -140,30 +169,44 @@ export default function ItineraryBuilder() {
       
       // 2. Upsert sections
       let savedCount = 0;
+      let tripTotalBudget = 0;
       for (let i = 0; i < sections.length; i++) {
         const sec = sections[i];
         
         // Skip completely empty sections
         if (!sec.start_date || !sec.end_date) continue;
         
+        // Calculate dynamic budget for this section based on inputs
+        const secTransport = sec.transport_cost – parseFloat(sec.transport_cost) : 0;
+        const secStay = sec.stay_cost – parseFloat(sec.stay_cost) : 0;
+        const secActivities = sec.activities_cost – parseFloat(sec.activities_cost) : 0;
+        const secMeals = sec.meals_cost – parseFloat(sec.meals_cost) : 0;
+        const customPlanned = (sec.custom_costs || []).reduce((sum, cc) => sum + (parseFloat(cc.planned_cost) || 0), 0);
+        const calcBudget = secTransport + secStay + secActivities + secMeals + customPlanned;
+        const finalBudget = calcBudget > 0 – calcBudget : (sec.budget – parseFloat(sec.budget) : null);
+        
+        tripTotalBudget += finalBudget || 0;
+        
         const payload: any = {
           trip_id: tripId,
           arrival_date: sec.start_date,
           departure_date: sec.end_date,
           position: i,
-          // title, description, budget require migration 00003 to be run
           title: sec.title || `Section ${i + 1}`,
           description: sec.description || '',
-          budget: sec.budget ? parseFloat(sec.budget) : null,
-          transport_cost: sec.transport_cost ? parseFloat(sec.transport_cost) : 0,
-          stay_cost: sec.stay_cost ? parseFloat(sec.stay_cost) : 0,
-          activities_cost: sec.activities_cost ? parseFloat(sec.activities_cost) : 0,
-          meals_cost: sec.meals_cost ? parseFloat(sec.meals_cost) : 0,
-          actual_transport_cost: sec.actual_transport_cost ? parseFloat(sec.actual_transport_cost) : 0,
-          actual_stay_cost: sec.actual_stay_cost ? parseFloat(sec.actual_stay_cost) : 0,
-          actual_activities_cost: sec.actual_activities_cost ? parseFloat(sec.actual_activities_cost) : 0,
-          actual_meals_cost: sec.actual_meals_cost ? parseFloat(sec.actual_meals_cost) : 0,
-          location: sec.location || null,
+          budget: finalBudget,
+          transport_cost: secTransport,
+          stay_cost: secStay,
+          activities_cost: secActivities,
+          meals_cost: secMeals,
+          actual_transport_cost: sec.actual_transport_cost – parseFloat(sec.actual_transport_cost) : 0,
+          actual_stay_cost: sec.actual_stay_cost – parseFloat(sec.actual_stay_cost) : 0,
+          actual_activities_cost: sec.actual_activities_cost – parseFloat(sec.actual_activities_cost) : 0,
+          actual_meals_cost: sec.actual_meals_cost – parseFloat(sec.actual_meals_cost) : 0,
+          location: {
+            ...(sec.location || {}),
+            custom_costs: sec.custom_costs || []
+          },
         };
 
         if (sec.id) {
@@ -174,6 +217,11 @@ export default function ItineraryBuilder() {
           if (insErr) throw insErr;
         }
         savedCount++;
+      }
+      
+      // Update trip budget with the sum of all sections
+      if (tripId) {
+        await supabase.from('trips').update({ budget_amount: tripTotalBudget }).eq('id', tripId);
       }
       
       if (savedCount === 0 && sections.some(s => !s.start_date || !s.end_date)) {
@@ -261,29 +309,62 @@ export default function ItineraryBuilder() {
               {/* Inputs */}
               <div className="ml-0 md:ml-[72px] space-y-6">
                 
-                {/* City Search Placeholder */}
+                {/* City / Location — Smart Combo-box */}
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-2">City / Location</label>
+
+                  {/* Preset quick-select pills */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {['Paris, France','Tokyo, Japan','New York, USA','Rome, Italy','Bali, Indonesia',
+                      'London, UK','Barcelona, Spain','Dubai, UAE','Sydney, Australia','Bangkok, Thailand'].map((city) => (
+                      <button
+                        key={city}
+                        type="button"
+                        onClick={() => updateSection(index, 'location', { ...section.location, city })}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                          section.location?.city === city
+                            – 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-blue-400 hover:text-blue-600'
+                        }`}
+                      >
+                        {city}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Free-text custom input */}
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
                     </span>
-                    <select
+                    <input
+                      type="text"
                       value={section.location?.city || ''}
                       onChange={(e) => updateSection(index, 'location', { ...section.location, city: e.target.value })}
-                      className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm font-medium text-gray-700 appearance-none"
-                    >
-                      <option value="" disabled>Search and select a city...</option>
-                      <option value="Paris, France">Paris, France</option>
-                      <option value="Tokyo, Japan">Tokyo, Japan</option>
-                      <option value="New York, USA">New York, USA</option>
-                      <option value="Rome, Italy">Rome, Italy</option>
-                      <option value="Bali, Indonesia">Bali, Indonesia</option>
-                    </select>
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                    </span>
+                      placeholder="Or type any custom city / place..."
+                      className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm font-medium text-gray-700"
+                    />
+                    {section.location?.city && (
+                      <button
+                        type="button"
+                        onClick={() => updateSection(index, 'location', { ...section.location, city: '' })}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
+                  {section.location?.city && (
+                    <p className="text-xs text-blue-600 mt-1.5 flex items-center gap-1">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      Selected: <span className="font-bold">{section.location.city}</span>
+                    </p>
+                  )}
                 </div>
 
                 {/* Dates & Overall Budget */}
@@ -387,6 +468,33 @@ export default function ItineraryBuilder() {
                       </div>
                     </div>
 
+                    {/* Custom Costs */}
+                    {(section.custom_costs || []).map((custom: any, cIdx: number) => (
+                      <div key={cIdx} className="bg-indigo-50 p-3 rounded-xl border border-indigo-100 relative group/custom">
+                        <div className="flex items-center justify-between mb-2">
+                           <input type="text" value={custom.name || ''} onChange={(e) => updateCustomCost(index, cIdx, 'name', e.target.value)} placeholder="Custom expense name..." className="bg-transparent font-bold text-xs text-indigo-700 outline-none w-full placeholder:text-indigo-300" />
+                           <button onClick={() => removeCustomCost(index, cIdx)} className="text-indigo-400 hover:text-indigo-600 opacity-0 group-hover/custom:opacity-100 transition-opacity">
+                             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                           </button>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="relative">
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">Plan $</span>
+                            <input type="number" value={custom.planned_cost || ''} onChange={(e) => updateCustomCost(index, cIdx, 'planned_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-white border border-indigo-200 rounded text-sm focus:ring-2 focus:ring-indigo-400 outline-none" />
+                          </div>
+                          <div className="relative">
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-rose-400 text-xs font-semibold">Actl $</span>
+                            <input type="number" value={custom.actual_cost || ''} onChange={(e) => updateCustomCost(index, cIdx, 'actual_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-rose-50 border border-rose-100 rounded text-sm focus:ring-2 focus:ring-rose-400 outline-none" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    <button onClick={() => addCustomCost(index)} className="flex items-center justify-center gap-1 p-3 rounded-xl border border-dashed border-gray-300 text-gray-500 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-colors w-full group/add">
+                      <svg className="w-4 h-4 transition-transform group-hover/add:rotate-90" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+                      <span className="text-xs font-bold uppercase tracking-wider">Add Custom Expense</span>
+                    </button>
+
                   </div>
                 </div>
 
@@ -398,13 +506,14 @@ export default function ItineraryBuilder() {
           {/* Add another Section Button */}
           <button 
             onClick={addSection}
-            className="w-full bg-[#f8fafc] hover:bg-white border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-2xl p-8 flex flex-col items-center justify-center transition-all group shadow-sm hover:shadow-md"
+            className="group relative w-full bg-[#f8fafc] hover:bg-white border-2 border-dashed border-blue-200 hover:border-blue-400 rounded-3xl p-10 flex flex-col items-center justify-center transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 overflow-hidden"
           >
-            <div className="w-12 h-12 bg-white group-hover:bg-blue-50 border-2 border-blue-600 rounded-full flex items-center justify-center text-blue-600 mb-4 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="relative w-16 h-16 bg-white group-hover:bg-blue-600 border-2 border-blue-100 group-hover:border-blue-600 rounded-full flex items-center justify-center text-blue-600 group-hover:text-white mb-5 transition-all shadow-sm group-hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] group-hover:scale-110 duration-300">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">Add another Section</h3>
-            <p className="text-gray-500 font-medium">Add more sections to complete your itinerary</p>
+            <h3 className="relative text-2xl font-extrabold text-slate-400 group-hover:text-blue-700 mb-1.5 transition-colors duration-300 tracking-tight">Add another Section</h3>
+            <p className="relative text-slate-500 font-medium transition-colors group-hover:text-blue-600/80">Add more sections to complete your itinerary</p>
           </button>
 
           {/* Save Action */}
@@ -418,9 +527,22 @@ export default function ItineraryBuilder() {
               <button 
                 onClick={handleSave}
                 disabled={isSaving}
-                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg shadow-blue-200 transition-all"
+                className="group relative flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-70 text-white font-extrabold py-3.5 px-8 rounded-full shadow-[0_8px_20px_rgba(37,99,235,0.25)] hover:shadow-[0_12px_24px_rgba(37,99,235,0.4)] transition-all hover:-translate-y-0.5 overflow-hidden"
               >
-                {isSaving ? 'Saving...' : 'Save Itinerary'}
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                <span className="relative flex items-center gap-2">
+                  {isSaving – (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      Save Itinerary
+                    </>
+                  )}
+                </span>
               </button>
             </div>
           </div>

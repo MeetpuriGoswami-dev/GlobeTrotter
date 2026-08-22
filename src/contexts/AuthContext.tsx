@@ -11,6 +11,7 @@ interface Profile {
   city: string | null;
   country: string | null;
   additional_information: string | null;
+  is_admin?: boolean;
 }
 
 interface AuthContextType {

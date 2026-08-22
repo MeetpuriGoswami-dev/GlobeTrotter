@@ -121,7 +121,7 @@ export default function Explore() {
         departure_date: endDate,
         position: 0,
         location: { name: place.name, address: place.location },
-      }).catch(e => console.warn('Stop creation warning:', e));
+      });
 
       setAddedIds(prev => new Set([...prev, place.id]));
       showToast(`"${place.name}" added to your trips!`, tripData.id);

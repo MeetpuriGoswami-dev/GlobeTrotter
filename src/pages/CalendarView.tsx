@@ -126,7 +126,6 @@ export default function CalendarView() {
   });
 
   const selectedDayTrips = selectedDay ? getTripsForDay(selectedDay) : [];
-  const upcomingTrips = trips.filter(t => toDateOnly(t.start_date) > todayStr).slice(0, 5);
   const ongoingTrips = trips.filter(t => toDateOnly(t.start_date) <= todayStr && toDateOnly(t.end_date) >= todayStr);
 
   return (

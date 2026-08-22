@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
-import { useAuth } from '@/contexts/AuthContext';
 import { fetchDestinationImage, getDestinationImage } from '@/lib/imageFetcher';
 
 const SECTION_IMAGES = [
@@ -15,7 +14,6 @@ const SECTION_IMAGES = [
 export default function ItineraryView() {
   const { id: tripId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [trip, setTrip] = useState<any>(null);
   const [stops, setStops] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);

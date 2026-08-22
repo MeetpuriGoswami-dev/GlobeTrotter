@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Filter, ArrowUpDown, LayoutGrid, MoreHorizontal, Heart, MessageCircle, Bookmark, Globe } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, LayoutGrid, Heart, MessageCircle, Bookmark } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Link } from 'react-router-dom';
 

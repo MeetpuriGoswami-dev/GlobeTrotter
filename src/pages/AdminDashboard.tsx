@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalTrips: 0,

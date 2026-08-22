@@ -134,4 +134,4 @@ No performance or usability numbers are claimed until the app is built and measu
 
 ## Project Status
 
-This README reflects the design/architecture phase (requirements analysis, schema, RLS model, and technology justification). No implementation results have been reported yet; see the accompanying design paper for the full literature review, diagrams, and rationale.
+This README reflects the design/architecture phase (requirements analysis, schema, RLS model, and technology justification).

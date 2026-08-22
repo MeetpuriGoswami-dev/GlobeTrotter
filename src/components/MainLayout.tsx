@@ -4,7 +4,7 @@ import { LogOut, User as UserIcon, Search, Bell } from 'lucide-react';
 import { useState } from 'react';
 
 export default function MainLayout() {
-  const { profile, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const location = useLocation();
   const [showMenu, setShowMenu] = useState(false);
 
@@ -120,7 +120,7 @@ export default function MainLayout() {
                 className="flex items-center gap-2 focus:outline-none"
               >
                 <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border border-slate-200 shadow-sm">
-                  {profile?.photo_path – (
+                  {profile?.photo_path ? (
                     <img src={profile.photo_path} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-500 bg-slate-100">
@@ -145,7 +145,7 @@ export default function MainLayout() {
                   <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden py-2 animate-in slide-in-from-top-2">
                     <div className="px-4 py-3 border-b border-slate-50">
                       <p className="text-sm font-bold text-slate-900 truncate">{profile?.name || 'User'}</p>
-                      <p className="text-xs text-slate-500 truncate mt-0.5">{profile?.email || 'user@example.com'}</p>
+                      <p className="text-xs text-slate-500 truncate mt-0.5">{user?.email || 'user@example.com'}</p>
                     </div>
                     <div className="py-1">
                       <Link 

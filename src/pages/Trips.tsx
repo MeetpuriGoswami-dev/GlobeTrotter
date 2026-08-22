@@ -159,7 +159,7 @@ export default function Trips() {
       )}
 
       {/* -- Content ----------------------------------------------------------- */}
-      {isLoading – (
+      {isLoading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-52 bg-slate-100 rounded-2xl animate-pulse" />

@@ -144,7 +144,7 @@ export default function BudgetBreakdown() {
           {/* Pie Chart */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-6">Current Distribution</h3>
-            {pieData.length > 0 – (
+            {pieData.length > 0 ? (
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -164,7 +164,7 @@ export default function BudgetBreakdown() {
           {/* Bar Chart */}
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-6">Planned vs Actual per Section</h3>
-            {barData.length > 0 – (
+            {barData.length > 0 ? (
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

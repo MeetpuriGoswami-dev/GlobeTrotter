@@ -201,7 +201,7 @@ export default function Explore() {
               onClick={() => setActiveCategory(cat)}
               className={`px-5 py-2 rounded-full font-bold text-sm border transition-all duration-200 ${
                 activeCategory === cat
-                  – 'bg-slate-900 text-white border-slate-900 shadow-lg'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-lg'
                   : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
               }`}
             >
@@ -219,7 +219,7 @@ export default function Explore() {
       </div>
 
       {/* Grid of Places */}
-      {filtered.length === 0 – (
+      {filtered.length === 0 ? (
         <div className="text-center py-24 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
           <div className="text-6xl mb-4">🌍</div>
           <h3 className="text-xl font-black text-slate-900 mb-2">No destinations found</h3>
@@ -275,13 +275,13 @@ export default function Explore() {
                     disabled={isAdding || isAdded}
                     className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 ${
                       isAdded
-                        – 'bg-emerald-50 text-emerald-700 border-2 border-emerald-200 cursor-default'
+                        ? 'bg-emerald-50 text-emerald-700 border-2 border-emerald-200 cursor-default'
                         : isAdding
-                        – 'bg-blue-50 text-blue-500 border-2 border-blue-200 cursor-wait'
+                        ? 'bg-blue-50 text-blue-500 border-2 border-blue-200 cursor-wait'
                         : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0'
                     }`}
                   >
-                    {isAdded – (
+                    {isAdded ? (
                       <>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         Added to Trips

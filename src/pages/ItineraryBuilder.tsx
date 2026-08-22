@@ -323,7 +323,7 @@ export default function ItineraryBuilder() {
                         onClick={() => updateSection(index, 'location', { ...section.location, city })}
                         className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                           section.location?.city === city
-                            – 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                             : 'bg-white text-slate-600 border-slate-200 hover:border-blue-400 hover:text-blue-600'
                         }`}
                       >
@@ -531,7 +531,7 @@ export default function ItineraryBuilder() {
               >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
                 <span className="relative flex items-center gap-2">
-                  {isSaving – (
+                  {isSaving ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       Saving...

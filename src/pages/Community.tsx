@@ -84,7 +84,7 @@ export default function Community() {
 
         {/* Posts Feed */}
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden divide-y divide-gray-50">
-          {isLoading – (
+          {isLoading ? (
             <div className="p-10 text-center text-gray-500 font-bold">Loading community trips...</div>
           ) : trips.length === 0 ? (
             <div className="p-10 text-center text-gray-500 font-bold">No public trips found yet!</div>

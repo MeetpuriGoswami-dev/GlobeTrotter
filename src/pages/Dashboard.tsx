@@ -206,7 +206,7 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {isLoading – (
+        {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 animate-pulse">
             {[1, 2, 3].map((i) => (
               <div key={i} className="h-56 bg-slate-200 rounded-2xl" />

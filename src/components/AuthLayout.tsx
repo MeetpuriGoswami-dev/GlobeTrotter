@@ -1,5 +1,6 @@
 import React from 'react';
-import landscape from '@/assets/auth-landscape.jpg';
+
+const LANDSCAPE_URL = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2000&auto=format&fit=crop';
 
 // GlobeTrotter SVG logo mark
 function LogoMark() {
@@ -23,7 +24,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div
         className="hidden lg:flex lg:w-[45%] relative flex-col justify-between p-10 overflow-hidden"
         style={{
-          backgroundImage: `url(${landscape})`,
+          backgroundImage: `url(${LANDSCAPE_URL})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}

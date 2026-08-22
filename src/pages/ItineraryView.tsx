@@ -108,7 +108,7 @@ export default function ItineraryView() {
     new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   const today = new Date().toISOString().split('T')[0];
-  const status = trip.end_date < today – 'completed' : trip.start_date <= today – 'ongoing' : 'upcoming';
+  const status = trip.end_date < today ? 'completed' : trip.start_date <= today ? 'ongoing' : 'upcoming';
   
   // Premium status badges
   const StatusBadge = () => {
@@ -151,8 +151,8 @@ export default function ItineraryView() {
     return acc + actT + actS + actA + actM + customActs;
   }, 0);
 
-  const rawImageUrl = trip.image_url === 'null' – null : trip.image_url;
-  const rawCoverPath = trip.cover_path === 'null' – null : trip.cover_path;
+  const rawImageUrl = trip.image_url === 'null' ? null : trip.image_url;
+  const rawCoverPath = trip.cover_path === 'null' ? null : trip.cover_path;
   const fallbackImg = getDestinationImage(trip.name);
   const coverImg = rawImageUrl || rawCoverPath || fallbackImg;
 
@@ -184,7 +184,7 @@ export default function ItineraryView() {
               const { error } = await supabase.from('trips').update({ is_public: newStatus }).eq('id', tripId);
               if (!error) setTrip({ ...trip, is_public: newStatus });
             }}
-            className={`group relative overflow-hidden flex items-center gap-2 backdrop-blur-md font-bold text-xs px-5 py-2.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5 border ${trip.is_public – 'bg-indigo-600/90 hover:bg-indigo-500 border-indigo-400 text-white shadow-indigo-500/30' : 'bg-slate-900/70 hover:bg-slate-800 border-slate-600 text-white shadow-xl'}`}
+            className={`group relative overflow-hidden flex items-center gap-2 backdrop-blur-md font-bold text-xs px-5 py-2.5 rounded-full shadow-lg transition-all hover:-translate-y-0.5 border ${trip.is_public ? 'bg-indigo-600/90 hover:bg-indigo-500 border-indigo-400 text-white shadow-indigo-500/30' : 'bg-slate-900/70 hover:bg-slate-800 border-slate-600 text-white shadow-xl'}`}
           >
             <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
             <span className="relative flex items-center gap-1.5">
@@ -195,7 +195,7 @@ export default function ItineraryView() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 )}
               </svg>
-              {trip.is_public – 'Public' : 'Private'}
+              {trip.is_public ? 'Public' : 'Private'}
             </span>
           </button>
 
@@ -248,12 +248,12 @@ export default function ItineraryView() {
             <span className="w-1.5 h-1.5 rounded-full bg-white/30"></span>
             <span className="flex items-center gap-2">
               <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              {totalDays} Day{totalDays !== 1 – 's' : ''}
+              {totalDays} Day{totalDays !== 1 ? 's' : ''}
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-white/30"></span>
             <span className="flex items-center gap-2">
               <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              {trip.travelers_count || 1} Traveler{(trip.travelers_count || 1) > 1 – 's' : ''}
+              {trip.travelers_count || 1} Traveler{(trip.travelers_count || 1) > 1 ? 's' : ''}
             </span>
           </div>
         </div>
@@ -370,7 +370,7 @@ export default function ItineraryView() {
                   {/* Image side */}
                   <div className="relative w-full md:w-2/5 h-48 md:h-auto overflow-hidden bg-slate-100 shrink-0">
                     <img
-                      src={(stop.image_url === 'null' – null : stop.image_url) || SECTION_IMAGES[index % SECTION_IMAGES.length]}
+                      src={(stop.image_url === 'null' ? null : stop.image_url) || SECTION_IMAGES[index % SECTION_IMAGES.length]}
                       alt={stop.title || `Section ${index + 1}`}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       onError={(e) => {

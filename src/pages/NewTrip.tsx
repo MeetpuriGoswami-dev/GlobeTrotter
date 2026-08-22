@@ -40,7 +40,7 @@ export default function NewTrip() {
     setIsLoading(true);
     setError('');
 
-    const finalDestination = formData.destination === 'Other' – formData.customDestination : formData.destination;
+    const finalDestination = formData.destination === 'Other' ? formData.customDestination : formData.destination;
 
     if (!finalDestination.trim()) {
       setError('Please provide a destination.');
@@ -222,7 +222,7 @@ export default function NewTrip() {
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white text-gray-700"
                 >
                   {[1,2,3,4,5,6,7,8,9,10].map(num => (
-                    <option key={num} value={num}>{num} {num === 1 – 'Person' : 'People'}</option>
+                    <option key={num} value={num}>{num} {num === 1 ? 'Person' : 'People'}</option>
                   ))}
                 </select>
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
@@ -259,7 +259,7 @@ export default function NewTrip() {
               disabled={isLoading}
               className="bg-[#3b82f6] hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-sm transition-colors disabled:opacity-70 flex items-center gap-2"
             >
-              {isLoading – 'Creating...' : 'Create Trip'}
+              {isLoading ? 'Creating...' : 'Create Trip'}
             </button>
           </div>
         </form>

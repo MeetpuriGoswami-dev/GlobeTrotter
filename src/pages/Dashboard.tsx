@@ -212,7 +212,7 @@ export default function Dashboard() {
               <div key={i} className="h-56 bg-slate-200 rounded-2xl" />
             ))}
           </div>
-        ) : allDisplayTrips.length > 0 – (
+        ) : allDisplayTrips.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {allDisplayTrips.slice(0, 6).map((trip, idx) => {
               const imgSrc = trip.image_url || trip.cover_path || TRIP_IMAGES[`default_${idx % 3}`];
@@ -248,8 +248,8 @@ export default function Dashboard() {
                   {/* Status badge for ongoing/upcoming */}
                   {(isOngoing || isUpcoming) && (
                     <div className="absolute top-12 left-3">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isOngoing – "bg-emerald-400 text-white" : "bg-orange-400 text-white"}`}>
-                        {isOngoing – "ONGOING" : "UPCOMING"}
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isOngoing ? "bg-emerald-400 text-white" : "bg-orange-400 text-white"}`}>
+                        {isOngoing ? "ONGOING" : "UPCOMING"}
                       </span>
                     </div>
                   )}

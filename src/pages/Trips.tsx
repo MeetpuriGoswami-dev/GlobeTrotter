@@ -94,7 +94,7 @@ export default function Trips() {
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">My Trips</h1>
           <p className="text-sm text-slate-500 mt-1">
-            {trips.length > 0 – `${trips.length} trip${trips.length > 1 – "s" : ""} in total` : "Start planning your first adventure"}
+            {trips.length > 0 ? `${trips.length} trip${trips.length > 1 ? "s" : ""} in total` : "Start planning your first adventure"}
           </p>
         </div>
         <Link
@@ -165,7 +165,7 @@ export default function Trips() {
             <div key={i} className="h-52 bg-slate-100 rounded-2xl animate-pulse" />
           ))}
         </div>
-      ) : trips.length === 0 – (
+      ) : trips.length === 0 ? (
         <EmptyState />
       ) : (
         <div className="space-y-12">

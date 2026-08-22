@@ -169,7 +169,7 @@ export default function SharedItinerary() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute bottom-4 left-6">
                       <p className="text-white/80 font-bold text-xs uppercase tracking-wider mb-1">
-                        {formatDate(stop.arrival_date)} {stop.arrival_date !== stop.departure_date – `- ${formatDate(stop.departure_date)}` : ''}
+                        {formatDate(stop.arrival_date)} {stop.arrival_date !== stop.departure_date ? `- ${formatDate(stop.departure_date)}` : ''}
                       </p>
                       <h3 className="text-2xl font-extrabold text-white">{stop.title || `Stop ${index + 1}`}</h3>
                     </div>

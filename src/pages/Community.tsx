@@ -86,7 +86,7 @@ export default function Community() {
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden divide-y divide-gray-50">
           {isLoading – (
             <div className="p-10 text-center text-gray-500 font-bold">Loading community trips...</div>
-          ) : trips.length === 0 – (
+          ) : trips.length === 0 ? (
             <div className="p-10 text-center text-gray-500 font-bold">No public trips found yet!</div>
           ) : trips.map((trip, idx) => (
             <div key={trip.id} className="p-6 hover:bg-gray-50/50 transition-colors">

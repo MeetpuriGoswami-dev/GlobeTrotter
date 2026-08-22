@@ -103,7 +103,7 @@ export default function Login() {
                 </svg>
               </span>
               <input
-                type={showPassword – 'text' : 'password'}
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

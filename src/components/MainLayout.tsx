@@ -42,10 +42,10 @@ export default function MainLayout() {
               <Link
                 key={link.name}
                 to={link.path}
-                className={"flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 " + (isActive – 'text-blue-700 bg-blue-50/80 shadow-sm border border-blue-100/50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50')}
+                className={"flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 " + (isActive ? 'text-blue-700 bg-blue-50/80 shadow-sm border border-blue-100/50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50')}
               >
                 <svg 
-                  className={"w-5 h-5 " + (isActive – 'text-blue-600' : 'text-slate-400')} 
+                  className={"w-5 h-5 " + (isActive ? 'text-blue-600' : 'text-slate-400')} 
                   fill="none" 
                   stroke="currentColor" 
                   strokeWidth="2" 
@@ -130,7 +130,7 @@ export default function MainLayout() {
                 </div>
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-bold text-slate-700 leading-tight">
-                    {profile?.name – profile.name.split(' ')[0] : 'User'}
+                    {profile?.name ? profile.name.split(' ')[0] : 'User'}
                   </p>
                 </div>
                 <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

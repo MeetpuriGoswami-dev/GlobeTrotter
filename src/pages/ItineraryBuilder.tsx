@@ -49,15 +49,15 @@ export default function ItineraryBuilder() {
             description: stop.description || '',
             start_date: stop.arrival_date,
             end_date: stop.departure_date,
-            budget: stop.budget – stop.budget.toString() : '',
-            transport_cost: stop.transport_cost – stop.transport_cost.toString() : '',
-            stay_cost: stop.stay_cost – stop.stay_cost.toString() : '',
-            activities_cost: stop.activities_cost – stop.activities_cost.toString() : '',
-            meals_cost: stop.meals_cost – stop.meals_cost.toString() : '',
-            actual_transport_cost: stop.actual_transport_cost – stop.actual_transport_cost.toString() : '',
-            actual_stay_cost: stop.actual_stay_cost – stop.actual_stay_cost.toString() : '',
-            actual_activities_cost: stop.actual_activities_cost – stop.actual_activities_cost.toString() : '',
-            actual_meals_cost: stop.actual_meals_cost – stop.actual_meals_cost.toString() : '',
+            budget: stop.budget ? stop.budget.toString() : '',
+            transport_cost: stop.transport_cost ? stop.transport_cost.toString() : '',
+            stay_cost: stop.stay_cost ? stop.stay_cost.toString() : '',
+            activities_cost: stop.activities_cost ? stop.activities_cost.toString() : '',
+            meals_cost: stop.meals_cost ? stop.meals_cost.toString() : '',
+            actual_transport_cost: stop.actual_transport_cost ? stop.actual_transport_cost.toString() : '',
+            actual_stay_cost: stop.actual_stay_cost ? stop.actual_stay_cost.toString() : '',
+            actual_activities_cost: stop.actual_activities_cost ? stop.actual_activities_cost.toString() : '',
+            actual_meals_cost: stop.actual_meals_cost ? stop.actual_meals_cost.toString() : '',
             custom_costs: stop.location?.custom_costs || [],
             location: stop.location || null,
             position: stop.position
@@ -177,13 +177,13 @@ export default function ItineraryBuilder() {
         if (!sec.start_date || !sec.end_date) continue;
         
         // Calculate dynamic budget for this section based on inputs
-        const secTransport = sec.transport_cost – parseFloat(sec.transport_cost) : 0;
-        const secStay = sec.stay_cost – parseFloat(sec.stay_cost) : 0;
-        const secActivities = sec.activities_cost – parseFloat(sec.activities_cost) : 0;
-        const secMeals = sec.meals_cost – parseFloat(sec.meals_cost) : 0;
+        const secTransport = sec.transport_cost ? parseFloat(sec.transport_cost) : 0;
+        const secStay = sec.stay_cost ? parseFloat(sec.stay_cost) : 0;
+        const secActivities = sec.activities_cost ? parseFloat(sec.activities_cost) : 0;
+        const secMeals = sec.meals_cost ? parseFloat(sec.meals_cost) : 0;
         const customPlanned = (sec.custom_costs || []).reduce((sum, cc) => sum + (parseFloat(cc.planned_cost) || 0), 0);
         const calcBudget = secTransport + secStay + secActivities + secMeals + customPlanned;
-        const finalBudget = calcBudget > 0 – calcBudget : (sec.budget – parseFloat(sec.budget) : null);
+        const finalBudget = calcBudget > 0 ? calcBudget : (sec.budget ? parseFloat(sec.budget) : null);
         
         tripTotalBudget += finalBudget || 0;
         
@@ -199,10 +199,10 @@ export default function ItineraryBuilder() {
           stay_cost: secStay,
           activities_cost: secActivities,
           meals_cost: secMeals,
-          actual_transport_cost: sec.actual_transport_cost – parseFloat(sec.actual_transport_cost) : 0,
-          actual_stay_cost: sec.actual_stay_cost – parseFloat(sec.actual_stay_cost) : 0,
-          actual_activities_cost: sec.actual_activities_cost – parseFloat(sec.actual_activities_cost) : 0,
-          actual_meals_cost: sec.actual_meals_cost – parseFloat(sec.actual_meals_cost) : 0,
+          actual_transport_cost: sec.actual_transport_cost ? parseFloat(sec.actual_transport_cost) : 0,
+          actual_stay_cost: sec.actual_stay_cost ? parseFloat(sec.actual_stay_cost) : 0,
+          actual_activities_cost: sec.actual_activities_cost ? parseFloat(sec.actual_activities_cost) : 0,
+          actual_meals_cost: sec.actual_meals_cost ? parseFloat(sec.actual_meals_cost) : 0,
           location: {
             ...(sec.location || {}),
             custom_costs: sec.custom_costs || []

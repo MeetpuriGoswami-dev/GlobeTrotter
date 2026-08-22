@@ -41,7 +41,7 @@ export default function Profile() {
 
   if (isLoading) return (<div className='min-h-screen flex items-center justify-center'><div className='w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin' /></div>);
 
-  const initials = formData.name – formData.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) : (user?.email?.[0].toUpperCase() || 'U');
+  const initials = formData.name ? formData.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) : (user?.email?.[0].toUpperCase() || 'U');
   const COVER = 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80' + '&w=2000&auto=format&fit=crop';
 
   const statList = [
@@ -64,7 +64,7 @@ export default function Profile() {
             <div className='relative mb-5'>
               <div className='absolute -inset-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full blur-md opacity-40' />
               <div className='relative w-28 h-28 rounded-full border-4 border-white shadow-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center overflow-hidden'>
-                {formData.photo_path – (<img src={formData.photo_path} alt='Profile' className='w-full h-full object-cover' onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />) : (<span className='text-3xl font-black text-white'>{initials}</span>)}
+                {formData.photo_path ? (<img src={formData.photo_path} alt='Profile' className='w-full h-full object-cover' onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />) : (<span className='text-3xl font-black text-white'>{initials}</span>)}
               </div>
             </div>
             <h2 className='text-xl font-black text-slate-900'>{formData.name || 'Anonymous Traveler'}</h2>
@@ -134,10 +134,10 @@ export default function Profile() {
                 )}
               </div>
               <div className='pt-4 flex justify-end'>
-                <button onClick={handleSave} disabled={isSaving} className={(saveSuccess – 'bg-emerald-500 shadow-emerald-500/30 ' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/30 disabled:opacity-60 ') + 'group relative overflow-hidden inline-flex items-center justify-center gap-2 font-black py-4 px-10 rounded-full shadow-xl transition-all duration-300 hover:-translate-y-0.5 w-full sm:w-auto text-sm tracking-widest text-white'}>
+                <button onClick={handleSave} disabled={isSaving} className={(saveSuccess ? 'bg-emerald-500 shadow-emerald-500/30 ' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/30 disabled:opacity-60 ') + 'group relative overflow-hidden inline-flex items-center justify-center gap-2 font-black py-4 px-10 rounded-full shadow-xl transition-all duration-300 hover:-translate-y-0.5 w-full sm:w-auto text-sm tracking-widest text-white'}>
                   <div className='absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out rounded-full' />
                   <span className='relative flex items-center gap-2'>
-                    {saveSuccess – (<><svg className='w-5 h-5' fill='none' stroke='currentColor' strokeWidth='3' viewBox='0 0 24 24'><path strokeLinecap='round' strokeLinejoin='round' d='M5 13l4 4L19 7' /></svg>SAVED!</>) : isSaving – (<><svg className='w-5 h-5 animate-spin' fill='none' viewBox='0 0 24 24'><circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4' /><path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z' /></svg>SAVING...</>) : (<><svg className='w-5 h-5' fill='none' stroke='currentColor' strokeWidth='2.5' viewBox='0 0 24 24'><path strokeLinecap='round' strokeLinejoin='round' d='M5 13l4 4L19 7' /></svg>SAVE CHANGES</>)}
+                    {saveSuccess ? (<><svg className='w-5 h-5' fill='none' stroke='currentColor' strokeWidth='3' viewBox='0 0 24 24'><path strokeLinecap='round' strokeLinejoin='round' d='M5 13l4 4L19 7' /></svg>SAVED!</>) : isSaving ? (<><svg className='w-5 h-5 animate-spin' fill='none' viewBox='0 0 24 24'><circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4' /><path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z' /></svg>SAVING...</>) : (<><svg className='w-5 h-5' fill='none' stroke='currentColor' strokeWidth='2.5' viewBox='0 0 24 24'><path strokeLinecap='round' strokeLinejoin='round' d='M5 13l4 4L19 7' /></svg>SAVE CHANGES</>)}
                   </span>
                 </button>
               </div>

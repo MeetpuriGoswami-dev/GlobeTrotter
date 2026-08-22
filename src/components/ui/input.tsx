@@ -14,8 +14,8 @@ export function Input({ className, icon, rightIcon, ...props }: InputProps) {
         <input
           className={cn(
             'w-full rounded-lg border border-gray-200 bg-white py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a3a6b] focus:border-transparent transition-all',
-            icon – 'pl-10' : 'pl-4',
-            rightIcon – 'pr-10' : 'pr-4',
+            icon ? 'pl-10' : 'pl-4',
+            rightIcon ? 'pr-10' : 'pr-4',
             className
           )}
           {...props}

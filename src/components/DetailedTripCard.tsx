@@ -29,7 +29,7 @@ export default function DetailedTripCard({
   destinationsCount, destinationsSample, budget,
   travelersCount, progress, startsInDays, completedOn, status, coverPath,
 }: DetailedTripCardProps) {
-  const rawCoverPath = coverPath === "null" – null : coverPath;
+  const rawCoverPath = coverPath === "null" ? null : coverPath;
   const imgUrl = rawCoverPath || getDestinationImage(name);
   const cfg = STATUS_CONFIG[status];
 
@@ -112,7 +112,7 @@ export default function DetailedTripCard({
               </svg>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-semibold mb-0.5">{status === "completed" – "Total Spent" : "Budget"}</p>
+              <p className="text-xs text-slate-500 font-semibold mb-0.5">{status === "completed" ? "Total Spent" : "Budget"}</p>
               <p className="text-sm font-extrabold text-slate-900">${budget?.toLocaleString() || "N/A"}</p>
               <p className="text-[10px] text-slate-400">Total</p>
             </div>
@@ -128,7 +128,7 @@ export default function DetailedTripCard({
             <div>
               <p className="text-xs text-slate-500 font-semibold mb-0.5">Travelers</p>
               <p className="text-sm font-extrabold text-slate-900">{travelersCount}</p>
-              <p className="text-[10px] text-slate-400">{travelersCount === 1 – "Person" : "People"}</p>
+              <p className="text-[10px] text-slate-400">{travelersCount === 1 ? "Person" : "People"}</p>
             </div>
           </div>
 
@@ -191,11 +191,11 @@ export default function DetailedTripCard({
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-            {status === "completed" – "Trip archived" : "Itinerary available"}
+            {status === "completed" ? "Trip archived" : "Itinerary available"}
           </div>
           <Link
             to={`/itinerary/${id}`}
-            className={"px-5 py-2 rounded-xl text-sm font-bold transition-all " + (status === "ongoing" – "bg-blue-600 text-white hover:bg-blue-700 shadow-sm shadow-blue-500/20" : "border border-blue-200 text-blue-600 hover:bg-blue-50")}
+            className={"px-5 py-2 rounded-xl text-sm font-bold transition-all " + (status === "ongoing" ? "bg-blue-600 text-white hover:bg-blue-700 shadow-sm shadow-blue-500/20" : "border border-blue-200 text-blue-600 hover:bg-blue-50")}
           >
             View Trip ?
           </Link>

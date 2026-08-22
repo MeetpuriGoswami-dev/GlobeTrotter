@@ -13,6 +13,7 @@ import BudgetBreakdown from '@/pages/BudgetBreakdown';
 import SharedItinerary from '@/pages/SharedItinerary';
 import AdminDashboard from '@/pages/AdminDashboard';
 import AdminRoute from '@/components/AdminRoute';
+import AdminLayout from '@/components/AdminLayout';
 import Community from '@/pages/Community';
 import Profile from '@/pages/Profile';
 import MainLayout from '@/components/MainLayout';
@@ -40,6 +41,11 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
+          {/* Admin Routes */}
+          <Route element={<AdminRoute><AdminLayout /></AdminRoute>}>
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Route>
+
           {/* Authenticated Routes with Main Layout */}
           <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
             <Route path="/dashboard" element={<Dashboard />} />
@@ -51,7 +57,6 @@ function App() {
             <Route path="/itinerary/:id/edit" element={<ItineraryBuilder />} />
             <Route path="/itinerary/:id/budget" element={<BudgetBreakdown />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/community" element={<Community />} />
           </Route>
           

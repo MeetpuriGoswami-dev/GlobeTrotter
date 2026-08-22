@@ -13,6 +13,10 @@ interface Section {
   stay_cost?: string;
   activities_cost?: string;
   meals_cost?: string;
+  actual_transport_cost?: string;
+  actual_stay_cost?: string;
+  actual_activities_cost?: string;
+  actual_meals_cost?: string;
   location?: any;
   position: number;
 }
@@ -49,6 +53,10 @@ export default function ItineraryBuilder() {
             stay_cost: stop.stay_cost ? stop.stay_cost.toString() : '',
             activities_cost: stop.activities_cost ? stop.activities_cost.toString() : '',
             meals_cost: stop.meals_cost ? stop.meals_cost.toString() : '',
+            actual_transport_cost: stop.actual_transport_cost ? stop.actual_transport_cost.toString() : '',
+            actual_stay_cost: stop.actual_stay_cost ? stop.actual_stay_cost.toString() : '',
+            actual_activities_cost: stop.actual_activities_cost ? stop.actual_activities_cost.toString() : '',
+            actual_meals_cost: stop.actual_meals_cost ? stop.actual_meals_cost.toString() : '',
             location: stop.location || null,
             position: stop.position
           })));
@@ -64,6 +72,10 @@ export default function ItineraryBuilder() {
             stay_cost: '',
             activities_cost: '',
             meals_cost: '',
+            actual_transport_cost: '',
+            actual_stay_cost: '',
+            actual_activities_cost: '',
+            actual_meals_cost: '',
             position: 0
           }]);
         }
@@ -87,6 +99,10 @@ export default function ItineraryBuilder() {
       stay_cost: '',
       activities_cost: '',
       meals_cost: '',
+      actual_transport_cost: '',
+      actual_stay_cost: '',
+      actual_activities_cost: '',
+      actual_meals_cost: '',
       position: sections.length
     };
     setSections([...sections, newSection]);
@@ -143,6 +159,10 @@ export default function ItineraryBuilder() {
           stay_cost: sec.stay_cost ? parseFloat(sec.stay_cost) : 0,
           activities_cost: sec.activities_cost ? parseFloat(sec.activities_cost) : 0,
           meals_cost: sec.meals_cost ? parseFloat(sec.meals_cost) : 0,
+          actual_transport_cost: sec.actual_transport_cost ? parseFloat(sec.actual_transport_cost) : 0,
+          actual_stay_cost: sec.actual_stay_cost ? parseFloat(sec.actual_stay_cost) : 0,
+          actual_activities_cost: sec.actual_activities_cost ? parseFloat(sec.actual_activities_cost) : 0,
+          actual_meals_cost: sec.actual_meals_cost ? parseFloat(sec.actual_meals_cost) : 0,
           location: sec.location || null,
         };
 
@@ -167,8 +187,8 @@ export default function ItineraryBuilder() {
     } catch (err: any) {
       console.error('Error saving sections:', err);
       const msg = err?.message || 'Unknown error';
-      if (msg.includes('city_id') || msg.includes('null value') || msg.includes('violates not-null') || msg.includes('column "transport_cost"')) {
-        setSaveError('⚠️ Database setup needed! Please run this SQL in your Supabase dashboard (supabase.com → SQL Editor):\n\nALTER TABLE trip_stops ALTER COLUMN city_id DROP NOT NULL;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS title text;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS description text;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS budget numeric(10,2);\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS transport_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS stay_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS activities_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS meals_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS location JSONB;\nNOTIFY pgrst, \'reload schema\';');
+      if (msg.includes('city_id') || msg.includes('null value') || msg.includes('violates not-null') || msg.includes('column "transport_cost"') || msg.includes('column "actual_activities_cost"')) {
+        setSaveError('⚠️ Database setup needed! Please run this SQL in your Supabase dashboard (supabase.com → SQL Editor):\n\nALTER TABLE trip_stops ALTER COLUMN city_id DROP NOT NULL;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS title text;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS description text;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS budget numeric(10,2);\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS transport_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS stay_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS activities_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS meals_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS actual_transport_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS actual_stay_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS actual_activities_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS actual_meals_cost numeric(10,2) DEFAULT 0;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS location JSONB;\nALTER TABLE trip_stops ADD COLUMN IF NOT EXISTS image_url text;\nALTER TABLE trips ADD COLUMN IF NOT EXISTS image_url text;\nALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_admin boolean DEFAULT false;\nNOTIFY pgrst, \'reload schema\';');
       } else {
         setSaveError('Error: ' + msg);
       }
@@ -304,36 +324,69 @@ export default function ItineraryBuilder() {
 
                 {/* Detailed Budget Breakdown */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-3">Cost Breakdown</label>
+                  <label className="block text-sm font-bold text-gray-900 mb-3">Cost Breakdown (Planned vs Actual)</label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                      <span className="block text-xs font-semibold text-gray-500 mb-1">Transport</span>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
-                        <input type="number" value={section.transport_cost || ''} onChange={(e) => updateSection(index, 'transport_cost', e.target.value)} placeholder="0" className="w-full pl-7 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                    
+                    {/* Transport */}
+                    <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                      <span className="block text-xs font-bold text-gray-700 mb-2">Transport</span>
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">Plan $</span>
+                          <input type="number" value={section.transport_cost || ''} onChange={(e) => updateSection(index, 'transport_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-white border border-gray-200 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                        </div>
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-rose-400 text-xs font-semibold">Actl $</span>
+                          <input type="number" value={section.actual_transport_cost || ''} onChange={(e) => updateSection(index, 'actual_transport_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-rose-50 border border-rose-100 rounded text-sm focus:ring-2 focus:ring-rose-400 outline-none" />
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <span className="block text-xs font-semibold text-gray-500 mb-1">Stay</span>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
-                        <input type="number" value={section.stay_cost || ''} onChange={(e) => updateSection(index, 'stay_cost', e.target.value)} placeholder="0" className="w-full pl-7 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+
+                    {/* Stay */}
+                    <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                      <span className="block text-xs font-bold text-gray-700 mb-2">Stay</span>
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">Plan $</span>
+                          <input type="number" value={section.stay_cost || ''} onChange={(e) => updateSection(index, 'stay_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-white border border-gray-200 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                        </div>
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-rose-400 text-xs font-semibold">Actl $</span>
+                          <input type="number" value={section.actual_stay_cost || ''} onChange={(e) => updateSection(index, 'actual_stay_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-rose-50 border border-rose-100 rounded text-sm focus:ring-2 focus:ring-rose-400 outline-none" />
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <span className="block text-xs font-semibold text-gray-500 mb-1">Activities</span>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
-                        <input type="number" value={section.activities_cost || ''} onChange={(e) => updateSection(index, 'activities_cost', e.target.value)} placeholder="0" className="w-full pl-7 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+
+                    {/* Activities */}
+                    <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                      <span className="block text-xs font-bold text-gray-700 mb-2">Activities</span>
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">Plan $</span>
+                          <input type="number" value={section.activities_cost || ''} onChange={(e) => updateSection(index, 'activities_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-white border border-gray-200 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                        </div>
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-rose-400 text-xs font-semibold">Actl $</span>
+                          <input type="number" value={section.actual_activities_cost || ''} onChange={(e) => updateSection(index, 'actual_activities_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-rose-50 border border-rose-100 rounded text-sm focus:ring-2 focus:ring-rose-400 outline-none" />
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <span className="block text-xs font-semibold text-gray-500 mb-1">Meals</span>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
-                        <input type="number" value={section.meals_cost || ''} onChange={(e) => updateSection(index, 'meals_cost', e.target.value)} placeholder="0" className="w-full pl-7 pr-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+
+                    {/* Meals */}
+                    <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                      <span className="block text-xs font-bold text-gray-700 mb-2">Meals</span>
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">Plan $</span>
+                          <input type="number" value={section.meals_cost || ''} onChange={(e) => updateSection(index, 'meals_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-white border border-gray-200 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                        </div>
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-rose-400 text-xs font-semibold">Actl $</span>
+                          <input type="number" value={section.actual_meals_cost || ''} onChange={(e) => updateSection(index, 'actual_meals_cost', e.target.value)} placeholder="0" className="w-full pl-10 pr-2 py-1.5 bg-rose-50 border border-rose-100 rounded text-sm focus:ring-2 focus:ring-rose-400 outline-none" />
+                        </div>
                       </div>
                     </div>
+
                   </div>
                 </div>
 

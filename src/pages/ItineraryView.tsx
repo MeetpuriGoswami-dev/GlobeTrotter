@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
-import { fetchDestinationImage } from '@/lib/imageFetcher';
+import { useAuth } from '@/contexts/AuthContext';
+import { fetchDestinationImage, getDestinationImage } from '@/lib/imageFetcher';
 
 const SECTION_IMAGES = [
   'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=800&auto=format&fit=crop',
@@ -14,13 +15,16 @@ const SECTION_IMAGES = [
 export default function ItineraryView() {
   const { id: tripId } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [trip, setTrip] = useState<any>(null);
   const [stops, setStops] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCopied, setIsCopied] = useState(false);
 
   const fetchData = async () => {
     if (!tripId) return;
     try {
+      setIsLoading(true);
       const { data: tripData, error: tripErr } = await supabase
         .from('trips')
         .select('*')
@@ -30,11 +34,12 @@ export default function ItineraryView() {
       if (tripErr) throw tripErr;
       
       let currentTrip = tripData;
-      if (!currentTrip.image_url) {
+      // Re-fetch if no image or if cached image is from Wikipedia (often returns maps/flags)
+      if (!currentTrip.image_url || currentTrip.image_url.includes('wikipedia.org') || currentTrip.image_url.includes('wikimedia.org')) {
         const fetchedUrl = await fetchDestinationImage(currentTrip.name);
         if (fetchedUrl) {
           await supabase.from('trips').update({ image_url: fetchedUrl }).eq('id', tripId);
-          currentTrip.image_url = fetchedUrl;
+          currentTrip = { ...currentTrip, image_url: fetchedUrl };
         }
       }
       setTrip(currentTrip);
@@ -49,11 +54,15 @@ export default function ItineraryView() {
       
       let currentStops = stopsData || [];
       const updatedStops = await Promise.all(currentStops.map(async (stop) => {
-        if (!stop.image_url && stop.title) {
-          const img = await fetchDestinationImage(stop.title);
-          if (img) {
-            await supabase.from('trip_stops').update({ image_url: img }).eq('id', stop.id);
-            return { ...stop, image_url: img };
+        // Re-fetch if no image, or if cached is from Wikipedia
+        if (!stop.image_url || stop.image_url.includes('wikipedia.org') || stop.image_url.includes('wikimedia.org')) {
+          const searchQuery = stop.location?.city || stop.title;
+          if (searchQuery) {
+            const img = await fetchDestinationImage(searchQuery);
+            if (img) {
+              await supabase.from('trip_stops').update({ image_url: img }).eq('id', stop.id);
+              return { ...stop, image_url: img };
+            }
           }
         }
         return stop;
@@ -78,22 +87,20 @@ export default function ItineraryView() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="font-semibold text-gray-500">Loading itinerary...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (!trip) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-500 font-bold text-xl mb-4">Trip not found</p>
-          <Link to="/trips" className="text-blue-600 hover:underline font-semibold">← Go to Trips</Link>
-        </div>
+      <div className="text-center py-20 bg-gray-50 rounded-2xl max-w-lg mx-auto my-10 border border-gray-200 shadow-sm">
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Trip not found</h2>
+        <p className="text-gray-500 mb-6">This itinerary doesn't exist or you don't have permission to view it.</p>
+        <Link to="/trips" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+          Back to Trips
+        </Link>
       </div>
     );
   }
@@ -114,14 +121,24 @@ export default function ItineraryView() {
   ) + 1;
 
   const totalBudget = stops.reduce((acc, s) => acc + (Number(s.budget) || 0), 0);
-  const coverImg = trip.image_url || trip.cover_path || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1200&auto=format&fit=crop';
+  const rawImageUrl = trip.image_url === 'null' ? null : trip.image_url;
+  const rawCoverPath = trip.cover_path === 'null' ? null : trip.cover_path;
+  const fallbackImg = getDestinationImage(trip.name);
+  const coverImg = rawImageUrl || rawCoverPath || fallbackImg;
 
   return (
     <div className="pb-32 min-h-screen">
 
       {/* Hero Cover */}
-      <div className="relative w-full h-64 rounded-3xl overflow-hidden mb-8 shadow-sm">
-        <img src={coverImg} alt={trip.name} className="w-full h-full object-cover" />
+      <div className="relative w-full h-64 rounded-3xl overflow-hidden mb-8 shadow-sm bg-gray-100">
+        <img 
+          src={coverImg} 
+          alt={trip.name} 
+          className="w-full h-full object-cover" 
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1200&auto=format&fit=crop';
+          }}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
         {/* Status Badge */}
@@ -297,11 +314,14 @@ export default function ItineraryView() {
               
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col w-[calc(100%-3rem)] md:w-[calc(50%-2.5rem)] hover:shadow-md transition-shadow">
                 {/* Section Image */}
-                <div className="relative w-full h-40 flex-shrink-0">
+                <div className="relative w-full h-40 flex-shrink-0 bg-gray-100">
                   <img
-                    src={stop.image_url || SECTION_IMAGES[index % SECTION_IMAGES.length]}
+                    src={(stop.image_url === 'null' ? null : stop.image_url) || SECTION_IMAGES[index % SECTION_IMAGES.length]}
                     alt={stop.title || `Section ${index + 1}`}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = SECTION_IMAGES[index % SECTION_IMAGES.length];
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:bg-gradient-to-r" />
                   <div className="absolute bottom-3 left-3 md:hidden">

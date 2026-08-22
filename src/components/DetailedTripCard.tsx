@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { getDestinationImage } from '@/lib/imageFetcher';
 
 interface DetailedTripCardProps {
   id: string;
@@ -22,16 +23,20 @@ export default function DetailedTripCard({
   destinationsCount, destinationsSample, budget, 
   travelersCount, progress, startsInDays, completedOn, status, coverPath
 }: DetailedTripCardProps) {
-  const imgUrl = coverPath || `https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1200&auto=format&fit=crop`;
+  const rawCoverPath = coverPath === 'null' ? null : coverPath;
+  const imgUrl = rawCoverPath || getDestinationImage(name);
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-gray-100 flex flex-col group">
+    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-gray-100 flex flex-col group bg-gray-100">
       {/* Top Banner Area (Image) */}
       <div className="relative h-48 w-full overflow-hidden">
         <img 
           src={imgUrl} 
           alt={name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1200&auto=format&fit=crop';
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         

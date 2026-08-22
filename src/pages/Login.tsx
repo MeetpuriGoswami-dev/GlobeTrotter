@@ -22,13 +22,36 @@ export default function Login() {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setError(error.message);
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      // Check if user is an admin
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', authData.user.id)
+        .single();
+
+      if (profile?.is_admin) {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to login');
+    } finally {
       setIsLoading(false);
-    } else {
-      navigate('/dashboard');
     }
+  };
+
+  const handleDemoAdminLogin = () => {
+    localStorage.setItem('demo_admin', 'true');
+    navigate('/admin');
   };
 
   return (
@@ -127,6 +150,15 @@ export default function Login() {
             Sign In
           </button>
         </form>
+
+        <div className="mt-4 pt-4">
+          <button 
+            onClick={handleDemoAdminLogin}
+            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-emerald-500/30 mb-2"
+          >
+            🚀 One-Click Demo Admin Bypass
+          </button>
+        </div>
 
         {/* Divider */}
         <div className="flex items-center gap-4 my-6">

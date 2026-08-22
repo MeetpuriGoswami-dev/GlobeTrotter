@@ -143,7 +143,7 @@ export default function Trips() {
                     travelersCount={trip.travelers_count || 1}
                     progress={getProgress(trip.start_date, trip.end_date)}
                     status="ongoing"
-                    coverPath={trip.cover_path}
+                    coverPath={trip.image_url || trip.cover_path}
                   />
                 ))}
               </div>
@@ -177,7 +177,7 @@ export default function Trips() {
                     travelersCount={trip.travelers_count || 1}
                     startsInDays={getDaysUntil(trip.start_date)}
                     status="upcoming"
-                    coverPath={trip.cover_path}
+                    coverPath={trip.image_url || trip.cover_path}
                   />
                 ))}
               </div>
@@ -211,7 +211,7 @@ export default function Trips() {
                     travelersCount={trip.travelers_count || 1}
                     completedOn={formatDate(trip.end_date)}
                     status="completed"
-                    coverPath={trip.cover_path}
+                    coverPath={trip.image_url || trip.cover_path}
                   />
                 ))}
               </div>

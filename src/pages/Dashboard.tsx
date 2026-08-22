@@ -158,7 +158,7 @@ export default function Dashboard() {
                 startDate={new Date(trip.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 endDate={new Date(trip.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 destinationsCount={1} // Placeholder
-                coverPath={trip.cover_path}
+                coverPath={trip.image_url || trip.cover_path}
               />
             ))}
           </div>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { getDestinationImage } from '@/lib/imageFetcher';
 
 interface TripCardProps {
   id: string;
@@ -11,16 +12,20 @@ interface TripCardProps {
 
 export default function TripCard({ id, name, startDate, endDate, destinationsCount, coverPath }: TripCardProps) {
   // Mock image if coverPath is not provided
-  const imgUrl = coverPath || `https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop`;
+  const rawCoverPath = coverPath === 'null' ? null : coverPath;
+  const imgUrl = rawCoverPath || getDestinationImage(name);
   
   return (
-    <div className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-gray-100 flex flex-col h-64">
+    <div className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-gray-100 flex flex-col h-64 bg-gray-100">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
           src={imgUrl} 
           alt={name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop';
+          }}
         />
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>

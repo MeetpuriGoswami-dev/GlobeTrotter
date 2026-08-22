@@ -19,16 +19,19 @@ export default function NewTrip() {
   const [formData, setFormData] = useState({
     name: '',
     destination: '',
+    customDestination: '',
     startDate: '',
     endDate: '',
     travelers: '1',
-    description: ''
+    description: '',
+    budget: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,6 +39,14 @@ export default function NewTrip() {
     if (!user) return;
     setIsLoading(true);
     setError('');
+
+    const finalDestination = formData.destination === 'Other' ? formData.customDestination : formData.destination;
+
+    if (!finalDestination.trim()) {
+      setError('Please provide a destination.');
+      setIsLoading(false);
+      return;
+    }
 
     try {
       // 0. Ensure the profile row exists (upsert is safe and idempotent)
@@ -55,7 +66,8 @@ export default function NewTrip() {
           start_date: formData.startDate,
           end_date: formData.endDate,
           travelers_count: parseInt(formData.travelers) || 1,
-          visibility: 'private'
+          visibility: 'private',
+          budget_amount: parseFloat(formData.budget) || 0,
         })
         .select()
         .single();
@@ -123,30 +135,53 @@ export default function NewTrip() {
               </div>
             </div>
             
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Destination</label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                </span>
-                <select 
-                  name="destination"
-                  value={formData.destination}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white text-gray-700"
-                >
-                  <option value="" disabled>Select a place or city</option>
-                  <option value="Paris, France">Paris, France</option>
-                  <option value="Tokyo, Japan">Tokyo, Japan</option>
-                  <option value="New York, USA">New York, USA</option>
-                  <option value="Rome, Italy">Rome, Italy</option>
-                  <option value="Bali, Indonesia">Bali, Indonesia</option>
-                </select>
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
-                </span>
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Destination</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </span>
+                  <select 
+                    name="destination"
+                    value={formData.destination}
+                    onChange={handleChange}
+                    required
+                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white text-gray-700"
+                  >
+                    <option value="" disabled>Select a popular destination...</option>
+                    <option value="Paris, France">Paris, France</option>
+                    <option value="Tokyo, Japan">Tokyo, Japan</option>
+                    <option value="New York, USA">New York, USA</option>
+                    <option value="Rome, Italy">Rome, Italy</option>
+                    <option value="Bali, Indonesia">Bali, Indonesia</option>
+                    <option value="London, UK">London, UK</option>
+                    <option value="Dubai, UAE">Dubai, UAE</option>
+                    <option value="Sydney, Australia">Sydney, Australia</option>
+                    <option value="Kyoto, Japan">Kyoto, Japan</option>
+                    <option value="Santorini, Greece">Santorini, Greece</option>
+                    <option value="Other" className="font-bold text-blue-600">Other (Type your own)</option>
+                  </select>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                  </span>
+                </div>
               </div>
+
+              {formData.destination === 'Other' && (
+                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Custom Destination</label>
+                  <input 
+                    type="text"
+                    name="customDestination"
+                    value={formData.customDestination}
+                    onChange={handleChange}
+                    required={formData.destination === 'Other'}
+                    placeholder="Enter your custom location..."
+                    className="w-full px-4 py-3 rounded-xl border border-blue-200 bg-blue-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-gray-700"
+                  />
+                </div>
+              )}
             </div>
           </div>
 
